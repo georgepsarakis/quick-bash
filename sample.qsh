@@ -1,0 +1,32 @@
+# a simple for loop
+for ( $i = 0 ; $i < 10 ; $i = $i + 1  ){
+   $x = 5
+   if ($x > 10) then {
+   print 'hello'
+   if ($x < 20) then {
+        echo 'ksdkfljds'
+        if ($x == 30) then {
+            print '30'
+        }
+     }
+   }
+}
+
+if ( $x <= 10 ) then {
+   print 'hello world 2'
+}
+
+Function f(x) {
+     if ($x > 10) then {
+       print 'how are you'
+       if ($a < 5) then {
+           bzip2('file1.txt')
+       } elseif ($b > 10) then {
+           cat 'hello.txt' === grep('-v', '"a string"') -> '/dev/null'
+       }
+    }
+    else {
+       print 'x <= 10'
+    }
+}
+
