@@ -51,6 +51,21 @@ reserved = {
    'or'       : 'OR'
 }
 
+operators_map = {
+  'OR'       : '||',
+  'AND'      : '&&',
+  'LGEQUALS' : '=',
+  'NOT'      : '!',
+  'DIVIDE'   : '/',
+  'PLUS'     : '+',
+  'MINUS'    : '-',
+  'TIMES'    : '*',
+  'GT'       : '>',
+  'GE'       : '>=',
+  'LE'       : '<=',
+  'LT'       : '<',
+}
+
 builtin_functions = {
    'print' : 'PRINT',
    'echo'  : 'ECHO'

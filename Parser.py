@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import sys
 from Tokenizer import Tokenizer
+from Tokens import *
 
 '''
 Adding numbers:
@@ -12,7 +13,24 @@ echo $(($var1+$var2))
 floating point:
 a=0.5
 b=0.7
-n=$(echo $a+$b|bc)
+n=$(echo $a+$b|bc -l)
+
+Better solution (using awk):
+a=10.94
+b=87.33
+awk -v a=$a -v b=$b 'BEGIN { print a/b }'
+c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'c=11.22
+awk -v a=$a -v b=$b -v c=$c 'BEGIN { print (a+c)*b }'
 '''
 
 
@@ -60,6 +78,18 @@ def quote_variable(token):
 
 def analyze_logical_condition(condition):
   pass
+
+def is_logical_operator(token):
+  return token.type in [ 'NOT', 'AND', 'OR' ]
+
+def is_math_operator(token):
+  return token.type in [ 'DIVIDE', 'MINUS', 'PLUS', 'TIMES' ]
+
+def math_operation(l_tokens, position):
+  token_prev = previous_token(l_tokens, position)
+  token_next = next_token(l_tokens, position)
+  '''n=$(echo $a+$b|bc -l)'''
+  '$(echo'+token_prev + operators[token.type] + token_next + '|bc -l)'
 
 def is_token_type(token, token_type):
   return token.type == token_type
