@@ -16,7 +16,7 @@ if ( $x <= 10 ) then {
    print 'hello world 2'
 }
 
-Function f(x) {
+function f(x) {
      if ($x > 10) then {
        print 'how are you'
        if ($a < 5) then {
@@ -29,4 +29,5 @@ Function f(x) {
        print 'x <= 10'
     }
 }
+
 
