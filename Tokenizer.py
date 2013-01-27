@@ -6,6 +6,7 @@ class Tokenizer:
     tokens = list(tokens) + list(reserved.values()) + list(builtin_functions.values()) + utilities
     token_list = []
     original_code = ''
+    global_line_number = 1
 
     # Regular expression rules for simple tokens
     t_PIPE         = r'\=\=\='
@@ -80,7 +81,9 @@ class Tokenizer:
 # Define a rule so we can track line numbers
     def t_newline(self, t):
       r'\n+'
-      t.lexer.lineno += len(t.value)
+#      t.lexer.lineno += len(t.value)
+      Tokenizer.global_line_number += len(t.value)
+      t.lexer.lineno = Tokenizer.global_line_number
 
 # A string containing ignored characters (spaces and tabs)
     t_ignore  = ' \t'
@@ -120,7 +123,7 @@ class Tokenizer:
       if t.lexer.level == 0:
 	t.value = t.lexer.lexdata[t.lexer.code_start : (t.lexer.lexpos - 1)]
 	t.type = "CODEBLOCK"
-	t.lexer.lineno += t.value.count('\n')
+	t.lexer.lineno += t.value.count('\n') 
 	t.lexer.begin('INITIAL')           
 	return t
 
@@ -153,5 +156,8 @@ class Tokenizer:
 	    nested_code[level].append(self.__get_nested_code(token.value, level + 1))
       return nested_code
 
-#LexToken properties -> 'lexer', 'lexpos', 'lineno', 'type', 'value'
-
+''' 
+LexToken properties -> 'lexer', 'lexpos', 'lineno', 'type', 'value'
+class LexToken(object):
+  return "LexToken(%s,%r,%d,%d)" % (self.type,self.value,self.lineno,self.lexpos)
+'''

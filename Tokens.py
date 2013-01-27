@@ -36,6 +36,18 @@ logical = [
   'IF', 'ELSEIF', 'ELSE'
 ]
 
+logical_operators = [ 'AND', 'OR', 'NOT' ]
+
+mathematical_operators = [
+  'PLUS', 'MINUS', 'DIVIDE', 'TIMES',
+]
+
+number_literals = [ 'INTEGER', 'DECIMAL' ]
+
+parentheses = [ 'LPAREN', 'RPAREN' ]
+
+mathematical_expression_tokens = mathematical_operators + number_literals + parentheses
+
 reserved = {
    'if'       : 'IF',
    'then'     : 'THEN',

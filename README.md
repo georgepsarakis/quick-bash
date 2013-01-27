@@ -19,4 +19,7 @@ TODO
 5. Documentation
 6. More samples/examples
 
+Dependencies
+------------
 
+  1. ply `apt-get install python-ply`
