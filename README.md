@@ -1,12 +1,19 @@
 quick-bash
 ==========
 
-A language that transcompiles to BASH. The concept is to make code more readable and easier to remember. 
+A micro-language that transcompiles to BASH. 
+
+The aim is to make code more readable and easier to remember. 
+
+## Why?
+
+For the fun of it! 
+
+## How?
 
 Uses the Python lex-yacc implementation (<a href="http://www.dabeaz.com/ply/ply.html">ply</a>).
 
-TODO
-----
+## TODO
 
 1. Complete the transcompilation rules
   1. Logical tests
@@ -19,7 +26,6 @@ TODO
 5. Documentation
 6. More samples/examples
 
-Dependencies
-------------
+## Dependencies
 
-  1. ply `apt-get install python-ply`
+  1. `pip install ply`
