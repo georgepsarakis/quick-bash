@@ -104,9 +104,8 @@ utilities = [
 ]
 
 builtins = [
-    'car',
-    'cdr',
     'range',
+    'exec',
 ]
 
 # Dictionary of functions

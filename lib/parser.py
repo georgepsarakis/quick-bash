@@ -54,6 +54,7 @@ def p_atom(t):
          | INTEGER
          | FLOAT         
          | STRING 
+         | PARAMETER
     """
     t[0] = t[1]
 
@@ -75,6 +76,8 @@ def p_apply_function(t):
             t[0] = """for %s in $( %s ); do
                 %s
             done""" % ( loop_variable, iterable, body, )
+        elif f == MACRO_BACKTICKS:
+            t[0] = '`%s`' % t[3].replace("'", '')
         elif f == MACRO_LET:            
             t[0] = "%s=%s" % tuple(t[3])
         elif f == MACRO_EXPORT:
@@ -90,7 +93,10 @@ def p_apply_function(t):
             left, right = t[3]
             t[0] = '%s %s %s' % ( left, f, right, )
         else:
-            t[0] = "%s %s" % (f, ' '.join(map(str, t[3])), )
+            if isinstance(t[3], list):
+                t[0] = "%s %s" % (f, ' '.join(map(str, t[3])), )
+            else:
+                t[0] = "%s %s" % (f, t[3])
 
 def p_function(t):
     """

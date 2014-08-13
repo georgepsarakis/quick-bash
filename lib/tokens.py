@@ -4,12 +4,13 @@ tokens = (
     'FLOAT', 'INTEGER', 'STRING', 'VARIABLE',
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 
     'LPAREN', 'RPAREN', 'NIL',
-    'GE', 'LE', 'GT', 'LT', 'NE', 'EQ',
-    'FUNCTION', 'BUILTINS', 'EOL',
+    'GE', 'LE', 'GT', 'LT', 'NE', 'EQ',    
+    'FUNCTION', 'BUILTINS', 'EOL', 'PARAMETER',
 )
 
 # Tokens
 """ Macros """
+MACRO_BACKTICKS = 'exec'
 MACRO_IF_ELSE = 'if-else'
 MACRO_LET = 'let'
 MACRO_EXPORT = 'export'
@@ -46,6 +47,11 @@ t_EOL = r'\s*\n\s*'
 
 """ Constants """
 t_NIL     = r'nil'
+
+def t_PARAMETER(t):
+    r'\~[a-zA-Z0-9_][a-zA-Z0-9_]*'
+    t.value = t.value.replace('~', '-')
+    return t
 
 def t_BUILTINS(t):
     r'\@[a-zA-Z_\-][\-a-zA-Z0-9_]*'    
