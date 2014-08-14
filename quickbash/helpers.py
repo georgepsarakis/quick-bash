@@ -1,3 +1,4 @@
+import os
 utilities = [
     'bash',
     'bunzip2',

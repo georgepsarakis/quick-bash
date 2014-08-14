@@ -1,7 +1,9 @@
+#!/usr/bin/python
 import os
 import re
-from tokens import *
-from parser import *
+from lexer import *
+from compiler import *
+from helpers import read_source_file
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -53,6 +55,21 @@ def qsh(source):
 
 def qsh_file(path):  
     output_file = os.path.splitext(os.path.abspath(path))[0] + '.qshc'
-    with open(os.path.splitext(path)[0], 'w') as f:
-        f.write(qsh(read_from_source_file(path)))
+    with open(output_file, 'w') as f:
+        f.write(qsh(read_source_file(path)))
     return output_file
+
+if __name__ == "__main__":
+    import argparse
+    argparser = argparse.ArgumentParser('QuickBash Compiler')
+    g = argparser.add_mutually_exclusive_group(required=True)
+    g.add_argument('-c', '--command', help='Evaluate the passed string')
+    g.add_argument('-f', '--file', help='Compile the specified source file')
+    parameters = argparser.parse_args()
+
+    if parameters.command is None:        
+        print qsh_file(parameters.file)
+    else:
+        print qsh(parameters.command)
+
+

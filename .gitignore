@@ -1,3 +1,4 @@
 # ignore compiled python files
 *.pyc
 archives
+*.qshc

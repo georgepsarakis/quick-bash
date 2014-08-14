@@ -1,8 +1,9 @@
 #!/usr/bin/python
-from lib.compiler import *
+from quickbash.quickbash import qsh
 
 if __name__ == "__main__":
     code = """
+    (@let a "b")(@let b "C")
     (@let A (* (+ 2 3) (* 2 4)));
     (@let B (* (+ 3 3) (* 4 4)));
     (@tar ~zcpf "archive.tar.gz" "archive");

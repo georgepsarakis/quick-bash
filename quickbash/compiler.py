@@ -1,6 +1,6 @@
 import operator
 from helpers import FUNCTIONS
-from tokens import *
+from lexer import *
 from functools import partial
 from itertools import chain
 
