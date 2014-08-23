@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os
 import re
+import pyparsing
 from lexer import *
 from compiler import *
 from helpers import read_source_file
@@ -20,19 +21,25 @@ __all__=['qsh', 'qsh_file']
 def startswith_any(iterable, s):
     return filter(lambda x: s.startswith(x + ' ') or s == x, iterable)
 
+def code_reassembly(structure):
+    reassembled = []
+    for element in structure:
+        if isinstance(element, pyparsing.ParseResults):
+            reassembled.append(code_reassembly(element))
+        else:
+            reassembled.append(element)
+    return '(%s)' % (' '.join(map(str, reassembled)),)         
+
+def preprocessor(source):
+    expression = pyparsing.Forward()
+    all_chars = pyparsing.Word(pyparsing.printables.replace('(', '').replace(')', ''))
+    expression << pyparsing.nestedExpr(content=pyparsing.OneOrMore(expression | all_chars))
+    syntax = pyparsing.OneOrMore(expression)
+    return [ code_reassembly(_) for _ in syntax.parseString(source) ]
+
 def qsh(source):
-    compiled = []
-    lines = [ _.strip() for _ in source.split("\n") ]
-    BUFFER = [[]]
-    for _ in lines:
-        BUFFER[-1].append(_.strip(';'))
-        if _.endswith(';'):
-            BUFFER.append([])
-    BUFFER = [ ' '.join(_) for _ in BUFFER ]
-    for line in BUFFER:
-        if line.strip() == '':
-            continue
-        compiled.append(yacc.parse(line).pop())
+    preprocessed = preprocessor(source)
+    compiled = [ yacc.parse(_).pop() for _ in preprocessed ]
     LEVEL = 0
     INDENT_SPACES = 4
     DECREASE_INDENT = [ 'fi', 'done', ]
