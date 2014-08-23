@@ -93,6 +93,11 @@ def t_INTEGER(t):
         raise Exception('Could parse integer: %s' % t.value)
     return t
 
+def t_COMMENT(t):
+    r'\#.*'
+    pass
+    # No return value. Token discarded
+
 # Ignored characters
 t_ignore = " \t"
 
