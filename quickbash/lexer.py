@@ -5,7 +5,7 @@ tokens = (
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 
     'LPAREN', 'RPAREN', 'NIL',
     'GE', 'LE', 'GT', 'LT', 'NE', 'EQ',    
-    'FUNCTION', 'BUILTINS', 'EOL', 'PARAMETER',
+    'FUNCTION', 'BUILTINS', 'PARAMETER',
 )
 
 # Tokens
@@ -14,6 +14,9 @@ MACRO_BACKTICKS = 'exec'
 MACRO_IF_ELSE = 'if-else'
 MACRO_LET = 'let'
 MACRO_EXPORT = 'export'
+MACRO_PIPE = 'pipe'
+MACRO_COMMENT = 'comment'
+MACRO_RAW = 'raw'
 MACRO_FOR = 'for'
 MACRO_EQ = '-eq'
 MACRO_NE = '-ne'
@@ -43,7 +46,7 @@ t_GE = r'>='
 t_LE = r'<='
 t_LPAREN  = r'\('
 t_RPAREN  = r'\)'
-t_EOL = r'\s*\n\s*'
+#t_EOL = r'\s*\n\s*'
 
 """ Constants """
 t_NIL     = r'nil'
@@ -70,11 +73,7 @@ def t_VARIABLE(t):
     return t
 
 def t_STRING(t):
-    r'(\"(\\.|[^"])*\")|(\'(\\.|[^\'])*\')'
-    try:
-        t.value = t.value.replace(r"\'", "'").replace(r'\"', '"')
-    except:
-        pass
+    r'("(\\"|[^"])*")|(\'(\\\'|[^\'])*\')'
     return t
 
 def t_FLOAT(t):
@@ -82,7 +81,7 @@ def t_FLOAT(t):
     try:
         t.value = float(t.value)
     except TypeError:
-        raise Exception('Could parse float: %s' % t.value)
+        raise Exception('Could not parse float: %s' % t.value)
     return t    
     
 def t_INTEGER(t):
@@ -90,13 +89,8 @@ def t_INTEGER(t):
     try:
         t.value = int(t.value)
     except ValueError:
-        raise Exception('Could parse integer: %s' % t.value)
+        raise Exception('Could not parse integer: %s' % t.value)
     return t
-
-def t_COMMENT(t):
-    r'\#.*'
-    pass
-    # No return value. Token discarded
 
 # Ignored characters
 t_ignore = " \t"

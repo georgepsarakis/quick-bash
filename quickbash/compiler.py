@@ -70,6 +70,8 @@ def p_apply_function(t):
         fname = f
     if callable(f):
         t[0] = f(*t[3])
+        if fname == "range":
+            t[0] = "(%s)" % " ".join(map(str, t[0]))
     elif isinstance(f, basestring):
         if f == MACRO_FOR:
             loop_variable, iterable, body = t[3]
@@ -92,11 +94,28 @@ def p_apply_function(t):
         elif f in MACRO_LOGICAL:
             left, right = t[3]
             t[0] = '%s %s %s' % ( left, f, right, )
+        elif f == MACRO_COMMENT:
+            if t[3].startswith("'"):
+                STRIP = "'"
+            else:
+                STRIP = '"'
+            t[0] = t[3].strip(STRIP)
+            t[0] = '# %s' % t[0]
+        elif f == MACRO_RAW:
+            if t[3].startswith("'"):
+                STRIP = "'"
+            else:
+                STRIP = '"'
+            t[0] = t[3].strip(STRIP)
+        elif f == MACRO_PIPE:
+           t[0] = ' | ' . join(t[3])
         else:
             if isinstance(t[3], list):
                 t[0] = "%s %s" % (f, ' '.join(map(str, t[3])), )
             else:
                 t[0] = "%s %s" % (f, t[3])
+    if isinstance(t[0], bool):
+        t[0] = str(t[0]).lower()
 
 def p_function(t):
     """

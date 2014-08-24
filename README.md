@@ -17,10 +17,64 @@ Uses the Python lex-yacc implementation (<a href="http://www.dabeaz.com/ply/ply.
 
 ## Syntax
 
-### Comment
+### Macros
+
+#### Backticks
 
 ```bash
-# Comments start with `#` and will be omitted in the output
+(@exec 'date')
+```
+
+#### For Loops
+
+```bash
+(@for a ls (@echo a (* 2 2)))
+```
+
+#### If-Else
+
+```bash
+(@if-else (== 1 2) (@echo (@exec 'date')) (@exec 'ls'));
+```
+
+#### Pipe
+```bash
+(@pipe (@echo 'hello') (@ssh host1))
+```
+
+#### BASH comment
+(@comment 'this will be a comment in the output')
+
+#### Raw BASH commands
+
+```bash
+(@raw 'cat myfile.txt | gzip --best - > myfile.txt.gz')
+```
+
+#### Arrays
+
+```bash
+(@let ARR (@range 1 10))
+```
+
+### Logical Operators
+
+```bash
+(@-eq 1 2)
+(@-gt 2 1)
+(@-ge 3 4)
+(@-lt 4 5)
+(@-le 6 8)
+(@-ne 1 1)
+```
+
+### Comments
+
+C++ style comments are supported:
+
+```cpp
+// Single line comments start with // and will be omitted in the output
+/* Multiline comments as well */
 ```
 
 ### Setting Variables
@@ -43,29 +97,11 @@ Functions start with `@`:
 (@gzip ~9 'myfile')
 ```
 
-### Backticks
-
-```bash
-(@exec 'date')
-```
-
-### For Loops
-
-```bash
-(@for a ls (@echo a (* 2 2)))
-```
-
-### If-Else
-
-```bash
-(@if-else (== 1 2) (@echo (@exec 'date')) (@exec 'ls'));
-```
-
 ## ToDos
 
 1. Documentation
 2. Tests
-3. More samples/examples
+3. More examples
 
 ## Dependencies
 

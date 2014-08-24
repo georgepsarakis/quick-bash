@@ -32,9 +32,11 @@ def code_reassembly(structure):
 
 def preprocessor(source):
     expression = pyparsing.Forward()
+    comment = pyparsing.cppStyleComment()
     all_chars = pyparsing.Word(pyparsing.printables.replace('(', '').replace(')', ''))
     expression << pyparsing.nestedExpr(content=pyparsing.OneOrMore(expression | all_chars))
     syntax = pyparsing.OneOrMore(expression)
+    syntax.ignore(comment)
     return [ code_reassembly(_) for _ in syntax.parseString(source) ]
 
 def qsh(source):
