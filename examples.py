@@ -17,8 +17,18 @@ if __name__ == "__main__":
     (@comment 'the following exports a variable named B')
     (@export B "hello world\'")    
     (@pipe (@echo 'hello') (@ssh host1))
-    (@if-else (== 1 2) (@echo (@exec 'date')) (@range 1 5))
-    (@if-else (@-eq 1 2) (@range 2 10) (@range 1 5))
-    (@if-else (@-eq "$a" "$b") (@range 2 10) (@range 1 5))
+    (@if-else (== 1 2) (@echo (@exec 'date')) (@ls ~alr))
+    (@if-else 
+        (@-eq 1 2) 
+            (@let R (@range 2 10)) 
+        (@let R (@range 1 5))
+    )
+    (@if-else 
+        (@-eq "$a" "$b") 
+            (@let G (@range 2 10)) 
+        (@let G (@range 1 5))
+    )
+    (@let CURRENT_DATETIME (:datetime.datetime.utcnow))
+    (@let A_DATETIME (:datetime.datetime.strptime "2014-05-06" "%Y-%m-%d"))
     """
     print qsh(code)

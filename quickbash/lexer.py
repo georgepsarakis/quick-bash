@@ -6,6 +6,7 @@ tokens = (
     'LPAREN', 'RPAREN', 'NIL',
     'GE', 'LE', 'GT', 'LT', 'NE', 'EQ',    
     'FUNCTION', 'BUILTINS', 'PARAMETER',
+    'PYTHON_FUNCTION',
 )
 
 # Tokens
@@ -46,7 +47,6 @@ t_GE = r'>='
 t_LE = r'<='
 t_LPAREN  = r'\('
 t_RPAREN  = r'\)'
-#t_EOL = r'\s*\n\s*'
 
 """ Constants """
 t_NIL     = r'nil'
@@ -64,6 +64,11 @@ def t_BUILTINS(t):
 def t_FUNCTION(t):
     r'\@[a-zA-Z_\-][\-a-zA-Z0-9_]*'    
     t.value = t.value.replace('@', '')
+    return t
+
+def t_PYTHON_FUNCTION(t):
+    r'\:[a-zA-Z_\.][\.a-zA-Z0-9_]*'    
+    t.value = t.value.lstrip(':')
     return t
 
 def t_VARIABLE(t):

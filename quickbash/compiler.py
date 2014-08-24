@@ -4,6 +4,40 @@ from lexer import *
 from functools import partial
 from itertools import chain
 
+TYPE_ARRAY = 1
+
+def quoted_string(argument):
+    argument = str(argument)
+    quoted = argument.startswith("'") and argument.endswith("'")
+    quoted = quoted or (argument.startswith('"') and argument.endswith('"'))
+    return quoted
+
+def quote(argument):    
+    if quoted_string(argument):
+        return argument
+    return '"%s"' % (
+        argument
+        .replace('\\', '\\\\')
+        .replace('"', '\\"')
+        .replace('$', '\\$')
+        .replace('`', '\\`')
+    )
+
+def shell_quote(expression):
+    if isinstance(expression, dict):
+        if expression['type'] == TYPE_ARRAY:
+            return expression['value']
+    expression = str(expression)
+    return quote(expression).strip("'")
+
+def import_module(module_name):
+    try:
+        globals()[module_name] = __import__(module_name)
+    except ImportError:
+        return None
+    else:
+        return globals()[module_name]
+
 OPERATOR_MAP = {
     '+'  : operator.add,
     '-'  : operator.sub,
@@ -71,7 +105,10 @@ def p_apply_function(t):
     if callable(f):
         t[0] = f(*t[3])
         if fname == "range":
-            t[0] = "(%s)" % " ".join(map(str, t[0]))
+            t[0] = { 
+                       "type": TYPE_ARRAY,
+                       "value": "(%s)" % " ".join(map(str, t[0])),
+                   }
     elif isinstance(f, basestring):
         if f == MACRO_FOR:
             loop_variable, iterable, body = t[3]
@@ -80,9 +117,11 @@ def p_apply_function(t):
             done""" % ( loop_variable, iterable, body, )
         elif f == MACRO_BACKTICKS:
             t[0] = '`%s`' % t[3].replace("'", '')
-        elif f == MACRO_LET:            
+        elif f == MACRO_LET: 
+            t[3][1] = shell_quote(t[3][1])                       
             t[0] = "%s=%s" % tuple(t[3])
         elif f == MACRO_EXPORT:
+            t[3][1] = shell_quote(t[3][1])                       
             t[0] = "export %s=%s" % tuple(t[3])
         elif f == MACRO_IF_ELSE:
             condition, body, else_body = t[3]
@@ -93,7 +132,7 @@ def p_apply_function(t):
             fi""" % ( condition, body, else_body, )
         elif f in MACRO_LOGICAL:
             left, right = t[3]
-            t[0] = '%s %s %s' % ( left, f, right, )
+            t[0] = '%s %s %s' % ( shell_quote(left), f, shell_quote(right), )
         elif f == MACRO_COMMENT:
             if t[3].startswith("'"):
                 STRIP = "'"
@@ -117,6 +156,36 @@ def p_apply_function(t):
     if isinstance(t[0], bool):
         t[0] = str(t[0]).lower()
 
+def p_apply_python_function(t):
+    """
+    sexpr : LPAREN python_function sexprs RPAREN
+    sexpr : LPAREN python_function sexpr RPAREN
+    sexpr : LPAREN python_function RPAREN
+    """
+    python_function = t[2]
+    if len(t) > 4:        
+        args = t[3]
+        if not isinstance(args, list):
+            args = (args,)
+    else:
+        args = ()
+    python_function = python_function.split('.')
+    # Import as part of package or module
+    if len(python_function) > 1:
+        module = import_module(python_function[0])
+        if module is None:            
+            raise Exception('Could not import modules for expression: %s' % t[2])
+        f = module
+        for _ in python_function[1:]:
+            f = getattr(f, _)        
+    else:
+        f = python_function[0]
+        if globals()['builtins'].get(f):
+            f = globals()['builtins'].get(f)
+        else:
+            raise Exception('Function does not exist in builtins: %s' % f)
+    t[0] = shell_quote("'%s'" % str(f(*args)))
+ 
 def p_function(t):
     """
     function : PLUS
@@ -141,7 +210,12 @@ def p_function(t):
     else:
         t[0] = t[1]
 
+def p_python_function(t):
+    """
+    python_function : PYTHON_FUNCTION
+    """
+    t[0] = t[1]
+
 def p_error(t):
     print("Syntax error at '%s'" % t.value)
-
 

@@ -115,6 +115,16 @@ Functions start with `@`:
 (@gzip ~9 'myfile')
 ```
 
+### Python Standard Library
+
+Python functions can be invoked and the return value used as a string:
+
+```bash
+# Start with :
+(@let CURRENT_TIME (:datetime.datetime.utcnow))
+(@let A_DATETIME (:datetime.datetime.strptime "2014-05-06" "%Y-%m-%d"))
+```
+
 ## ToDos
 
 1. Documentation
