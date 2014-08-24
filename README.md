@@ -43,7 +43,10 @@ Uses the Python lex-yacc implementation (<a href="http://www.dabeaz.com/ply/ply.
 ```
 
 #### BASH comment
+
+```bash
 (@comment 'this will be a comment in the output')
+```
 
 #### Raw BASH commands
 
@@ -60,12 +63,27 @@ Uses the Python lex-yacc implementation (<a href="http://www.dabeaz.com/ply/ply.
 ### Logical Operators
 
 ```bash
+// [ 1 -eq 2 ]
 (@-eq 1 2)
+// [ 2 -gt 1 ]
 (@-gt 2 1)
+// [ 3 -ge 4 ]
 (@-ge 3 4)
+// [ 4 -lt 5 ]
 (@-lt 4 5)
+// [ 6 -le 8 ]
 (@-le 6 8)
+// [ 1 -ne 1 ]
 (@-ne 1 1)
+```
+
+Python logical operators can be used for pre-calculated boolean output:
+
+```bash
+// false
+(== 1 2)
+// true
+(> 2 3)
 ```
 
 ### Comments
