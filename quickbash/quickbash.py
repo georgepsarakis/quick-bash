@@ -1,11 +1,13 @@
 #!/usr/bin/python
 import os
 import re
+import os
 import pyparsing
 from lexer import *
 from compiler import *
 from helpers import read_source_file
 
+DEBUG = os.environ.get('QUICKBASH_DEBUG', 0) == '1'
 PATH = os.path.dirname(os.path.abspath(__file__))
 
 # Build the lexer
@@ -17,9 +19,6 @@ import ply.yacc as yacc
 yacc.yacc('LALR', False, None, 'parsetab', None, 1, 1, 1, None, PATH)
 
 __all__=['qsh', 'qsh_file']
-
-def startswith_any(iterable, s):
-    return filter(lambda x: s.startswith(x + ' ') or s == x, iterable)
 
 def code_reassembly(structure):
     reassembled = []
@@ -41,6 +40,10 @@ def preprocessor(source):
 
 def qsh(source):
     preprocessed = preprocessor(source)
+    if DEBUG:
+        for p in preprocessed:
+            print p
+            print yacc.parse(p).pop()
     compiled = [ yacc.parse(_).pop() for _ in preprocessed ]
     LEVEL = 0
     INDENT_SPACES = 4
@@ -74,7 +77,9 @@ if __name__ == "__main__":
     g = argparser.add_mutually_exclusive_group(required=True)
     g.add_argument('-c', '--command', help='Evaluate the passed string')
     g.add_argument('-f', '--file', help='Compile the specified source file')
+    argparser.add_argument('-D', '--debug', help='Debug mode', action='store_true', default=False)    
     parameters = argparser.parse_args()
+    DEBUG = parameters.debug
 
     if parameters.command is None:        
         print qsh_file(parameters.file)

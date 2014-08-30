@@ -1,55 +1,5 @@
-import operator
-from helpers import FUNCTIONS
+from helpers import *
 from lexer import *
-from functools import partial
-from itertools import chain
-
-TYPE_ARRAY = 1
-
-def quoted_string(argument):
-    argument = str(argument)
-    quoted = argument.startswith("'") and argument.endswith("'")
-    quoted = quoted or (argument.startswith('"') and argument.endswith('"'))
-    return quoted
-
-def quote(argument):    
-    if quoted_string(argument):
-        return argument
-    return '"%s"' % (
-        argument
-        .replace('\\', '\\\\')
-        .replace('"', '\\"')
-        .replace('$', '\\$')
-        .replace('`', '\\`')
-    )
-
-def shell_quote(expression):
-    if isinstance(expression, dict):
-        if expression['type'] == TYPE_ARRAY:
-            return expression['value']
-    expression = str(expression)
-    return quote(expression).strip("'")
-
-def import_module(module_name):
-    try:
-        globals()[module_name] = __import__(module_name)
-    except ImportError:
-        return None
-    else:
-        return globals()[module_name]
-
-OPERATOR_MAP = {
-    '+'  : operator.add,
-    '-'  : operator.sub,
-    '/'  : operator.div,
-    '*'  : operator.mul,
-    '>'  : operator.gt,
-    '<'  : operator.lt,
-    '>=' : operator.ge,
-    '<=' : operator.le,
-    '!=' : operator.ne,
-    '==' : operator.eq,
-}
 
 # Parsing rules
 precedence = ()
@@ -89,6 +39,8 @@ def p_atom(t):
          | FLOAT         
          | STRING 
          | PARAMETER
+         | TRUE
+         | FALSE
     """
     t[0] = t[1]
 
@@ -130,22 +82,17 @@ def p_apply_function(t):
             else 
                 %s
             fi""" % ( condition, body, else_body, )
-        elif f in MACRO_LOGICAL:
+        elif f.strip('?') in ( 'ne', 'eq', 'gt', 'ge', 'lt', 'le', ):
             left, right = t[3]
-            t[0] = '%s %s %s' % ( shell_quote(left), f, shell_quote(right), )
-        elif f == MACRO_COMMENT:
+            t[0] = '%s %s %s' % ( shell_quote(left), '-%s' % f.strip('?'), shell_quote(right), )
+        elif f in ( MACRO_COMMENT, MACRO_RAW, ):
             if t[3].startswith("'"):
                 STRIP = "'"
             else:
                 STRIP = '"'
             t[0] = t[3].strip(STRIP)
-            t[0] = '# %s' % t[0]
-        elif f == MACRO_RAW:
-            if t[3].startswith("'"):
-                STRIP = "'"
-            else:
-                STRIP = '"'
-            t[0] = t[3].strip(STRIP)
+            if f == MACRO_COMMENT:
+                t[0] = '# %s' % t[0]
         elif f == MACRO_PIPE:
            t[0] = ' | ' . join(t[3])
         else:
@@ -199,14 +146,12 @@ def p_function(t):
              | LE
              | NE
              | FUNCTION            
-             | BUILTINS
+             | LOGICAL
     """
     if t[1] in OPERATOR_MAP:
         t[0] = OPERATOR_MAP[t[1]]
     elif t[1] == 'range':
-        t[0] = range
-    elif t[1] in FUNCTIONS:
-        t[0] = t[1]
+        t[0] = range    
     else:
         t[0] = t[1]
 

@@ -113,6 +113,8 @@ Functions start with `@`:
 (@gzip 'myfile')
 # Command-line parameters are passed with `~`
 (@gzip ~9 'myfile')
+# Logical expressions
+(@eq? 1 2)
 ```
 
 ### Python Standard Library
@@ -125,11 +127,10 @@ Python functions can be invoked and the return value used as a string:
 (@let A_DATETIME (:datetime.datetime.strptime "2014-05-06" "%Y-%m-%d"))
 ```
 
-## ToDos
+## To-dos
 
 1. Documentation
-2. Tests
-3. More examples
+2. More examples
 
 ## Dependencies
 

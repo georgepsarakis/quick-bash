@@ -10,9 +10,9 @@
 (@let VAR2 'HELLO WORLD!')
 (@export B 'hello world')
 (@if-else (== 1 2) (@echo (@exec 'date')) (@range 1 5))
-(@if-else (@-eq 1 2) (@range 2 10) (@range 1 5))
+(@if-else (@eq? 1 2) (@range 2 10) (@range 1 5))
 (@if-else (
-    @-eq "$a" "$b"
+    @ne? "$a" "$b"
   ) 
   (
     @range 2 10

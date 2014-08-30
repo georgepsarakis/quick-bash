@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+import os
 import sys
-sys.path.append('..')
+PATH = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(PATH))
 from quickbash.quickbash import qsh
 
 if __name__ == "__main__":
@@ -21,12 +23,12 @@ if __name__ == "__main__":
     (@pipe (@echo 'hello') (@ssh host1))
     (@if-else (== 1 2) (@echo (@exec 'date')) (@ls ~alr))
     (@if-else 
-        (@-eq 1 2) 
+        (@eq? 1 2) 
             (@let R (@range 2 10)) 
         (@let R (@range 1 5))
     )
     (@if-else 
-        (@-eq "$a" "$b") 
+        (@ne? "$a" "$b") 
             (@let G (@range 2 10)) 
         (@let G (@range 1 5))
     )
