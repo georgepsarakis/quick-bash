@@ -1,4 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+import sys
+sys.path.append('..')
 from quickbash.quickbash import qsh
 
 if __name__ == "__main__":
