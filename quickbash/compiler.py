@@ -1,3 +1,4 @@
+from itertools import chain
 from helpers import *
 from lexer import *
 
@@ -97,7 +98,7 @@ def p_apply_function(t):
            t[0] = ' | ' . join(t[3])
         else:
             if isinstance(t[3], list):
-                t[0] = "%s %s" % (f, ' '.join(map(str, t[3])), )
+                t[0] = "%s %s" % (f, ' '.join(map(shell_quote, map(str, chain(t[3])))), )
             else:
                 t[0] = "%s %s" % (f, t[3])
     if isinstance(t[0], bool):

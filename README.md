@@ -100,6 +100,7 @@ C++ style comments are supported:
 ```bash
 # Simple assignment
 (@let A 'HELLO WORLD')
+
 # Export variable
 (@export A 'HELLO WORLD')
 ```
@@ -111,8 +112,13 @@ Functions start with `@`:
 ```bash
 # Start with @
 (@gzip 'myfile')
+
 # Command-line parameters are passed with `~`
 (@gzip ~9 'myfile')
+
+# Long form options can be passed with ~~
+(@grep ~~max-count 4 ~~regexp '[a-z][0-9]' a.txt)
+
 # Logical expressions
 (@eq? 1 2)
 ```
@@ -134,6 +140,4 @@ Python functions can be invoked and the return value used as a string:
 
 ## Dependencies
 
-  1. `pip install ply`
-  2. `pip install argparse`
-  3. `pip install pyparsing`
+```pip install ply argparse pyparsing```

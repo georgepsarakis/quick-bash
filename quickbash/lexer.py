@@ -64,7 +64,7 @@ t_TRUE  = r'true'
 t_FALSE = r'false'
 
 def t_PARAMETER(t):
-    r'\~[a-zA-Z0-9_][a-zA-Z0-9_]*'
+    r'\~{1,2}[a-zA-Z0-9_]+[\-]*[a-zA-Z0-9_]*'
     t.value = t.value.replace('~', '-')
     return t
 
@@ -84,7 +84,7 @@ def t_PYTHON_FUNCTION(t):
     return t
 
 def t_VARIABLE(t):    
-    r'[a-zA-Z_][a-zA-Z0-9_]*'
+    r'[a-zA-Z_\.][a-zA-Z0-9_\.]*'
     if t.value in reserved_words:
         t.type = reserved_words[t.value]
     if t.value == t_NIL:

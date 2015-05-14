@@ -92,5 +92,9 @@ class TestCompiler(unittest.TestCase):
     def test_operations(self):
         self.assertEqual(2, int(qsh('(+ 1 1)')))
 
+    def test_utilities(self):
+       self.assertEqual('grep "--max-count" "4" "--regexp" \'[a-z][0-9]\' "a.txt"', qsh("(@grep ~~max-count 4 ~~regexp '[a-z][0-9]' a.txt)"))
+       self.assertEqual('gzip "-9" "a.txt"', qsh("(@gzip ~9 a.txt)"))
+
 if __name__=="__main__":
     unittest.main(verbosity=2)
