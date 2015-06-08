@@ -70,6 +70,9 @@ def p_apply_function(t):
             done""" % ( loop_variable, iterable, body, )
         elif f == MACRO_BACKTICKS:
             t[0] = '`%s`' % t[3].replace("'", '')
+        elif f == MACRO_VAR:
+            t.is_variable = True
+            t[0] = '${}'.format(t[3])
         elif f == MACRO_LET: 
             t[3][1] = shell_quote(t[3][1])                       
             t[0] = "%s=%s" % tuple(t[3])
@@ -97,8 +100,14 @@ def p_apply_function(t):
         elif f == MACRO_PIPE:
            t[0] = ' | ' . join(t[3])
         else:
-            if isinstance(t[3], list):
-                t[0] = "%s %s" % (f, ' '.join(map(shell_quote, map(str, chain(t[3])))), )
+            if isinstance(t[3], list):                
+                def _quote_tokens(token):
+                    if hasattr(t, 'is_variable'):
+                        if getattr(t, 'is_variable'):
+                            return '"{}"'.format(str(token))
+                    else:
+                        return shell_quote(str(token))
+                t[0] = "%s %s" % (f, ' '.join(map(_quote_tokens, chain(t[3]))),)
             else:
                 t[0] = "%s %s" % (f, t[3])
     if isinstance(t[0], bool):

@@ -43,6 +43,7 @@ MACRO_PIPE = 'pipe'
 MACRO_COMMENT = 'comment'
 MACRO_RAW = 'raw'
 MACRO_FOR = 'for'
+MACRO_VAR = 'var'
 
 """ Operators """
 t_PLUS    = r'\+'

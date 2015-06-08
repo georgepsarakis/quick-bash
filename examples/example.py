@@ -11,7 +11,7 @@ if __name__ == "__main__":
     (@let A (* (+ 2 3) (* 2 4)))
     (@let B (* (+ 3 3) (* 4 4)))
     (@tar ~zcpf "archive.tar.gz" "archive")
-    (@for a ls (@echo a (* 2 2)))
+    (@for a ls (@echo (@var a) (* 2 2)))
     (@let VAR1 (@range 1 10))
     (@let VAR2 'HELLO WORLD!')
     /* This is a raw command */
