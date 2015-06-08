@@ -128,9 +128,9 @@ def p_apply_python_function(t):
             f = getattr(f, _)        
     else:
         f = python_function[0]
-        if globals()['builtins'].get(f):
-            f = globals()['builtins'].get(f)
-        else:
+        try:
+            f = globals()['builtins'][f]
+        except KeyError:
             raise Exception('Function does not exist in builtins: %s' % f)
     t[0] = shell_quote("'%s'" % str(f(*args)))
  
