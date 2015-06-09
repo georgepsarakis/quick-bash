@@ -56,7 +56,10 @@ def p_apply_function(t):
     else:
         fname = f
     if callable(f):
-        t[0] = f(*t[3])
+        if f.__name__ in ['add', 'div', 'mul', 'sub']:
+            t[0] = '$(({} {} {}))'.format(t[3][0], INVERSE_OPERATOR_MAP[f], t[3][1])
+        else:
+            t[0] = f(*t[3])
         if fname == "range":
             t[0] = { 
                        "type": TYPE_ARRAY,
