@@ -1,9 +1,9 @@
 quick-bash
 ==========
 
-A micro-language that transcompiles to BASH. 
+__quick-bash__ is a micro-language that transcompiles to Bash.
 
-The aim is to make code more readable and easier to remember. 
+It was built mainly for research purposes and the aim is to make Bash coding more readable and (hopefully) easier to remember. 
 
 ## Why?
 
@@ -13,7 +13,8 @@ Also, because most of us never remember how **if-else** conditionals and **for**
 
 ## How?
 
-Uses the Python lex-yacc implementation (<a href="http://www.dabeaz.com/ply/ply.html">ply</a>).
+Uses the Python lex-yacc implementation [ply](http://www.dabeaz.com/ply/ply.html) for tokenization and LALR parsing, 
+as well as the [pyparsing package](https://pypi.python.org/pypi/pyparsing/2.0.3) for source code preprocessing.
 
 ## Syntax
 
@@ -42,13 +43,13 @@ Uses the Python lex-yacc implementation (<a href="http://www.dabeaz.com/ply/ply.
 (@pipe (@echo 'hello') (@ssh host1))
 ```
 
-#### BASH comment
+#### Bash comment
 
 ```bash
 (@comment 'this will be a comment in the output')
 ```
 
-#### Raw BASH commands
+#### Raw shell commands
 
 ```bash
 (@raw 'cat myfile.txt | gzip --best - > myfile.txt.gz')
@@ -100,6 +101,9 @@ C++ style comments are supported:
 ```bash
 # Simple assignment
 (@let A 'HELLO WORLD')
+
+# Referencing a variable
+(@echo (@var A))
 
 # Export variable
 (@export A 'HELLO WORLD')
