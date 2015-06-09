@@ -7,6 +7,7 @@ from itertools import chain
 __all__ = [
     'TYPE_ARRAY',
     'OPERATOR_MAP',
+    'INVERSE_OPERATOR_MAP',
     'startswith_any',
     'read_source_file',
     'quoted_string',
@@ -29,6 +30,8 @@ OPERATOR_MAP = {
     '!=' : operator.ne,
     '==' : operator.eq,
 }
+
+INVERSE_OPERATOR_MAP = dict(zip(OPERATOR_MAP.values(), OPERATOR_MAP.keys()))
 
 
 def startswith_any(iterable, s):
