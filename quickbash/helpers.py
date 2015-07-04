@@ -1,7 +1,8 @@
+from __future__ import unicode_literals
 import os
+import re
 import operator
 from pipes import quote
-from functools import partial
 from itertools import chain
 
 __all__ = [
@@ -14,28 +15,50 @@ __all__ = [
     'quote',
     'shell_quote',
     'import_module',
+    'wrap',
+    'create_array'
 ]
 
 TYPE_ARRAY = 1
 
 OPERATOR_MAP = {
-    '+'  : operator.add,
-    '-'  : operator.sub,
-    '/'  : operator.div,
-    '*'  : operator.mul,
-    '>'  : operator.gt,
-    '<'  : operator.lt,
-    '>=' : operator.ge,
-    '<=' : operator.le,
-    '!=' : operator.ne,
-    '==' : operator.eq,
+    '+': operator.add,
+    '-': operator.sub,
+    '/': operator.div,
+    '*': operator.mul,
+    '>': operator.gt,
+    '<': operator.lt,
+    '>=': operator.ge,
+    '<=': operator.le,
+    '!=': operator.ne,
+    '==': operator.eq,
 }
+INVERSE_OPERATOR_MAP = dict(
+    zip(
+        OPERATOR_MAP.values(),
+        OPERATOR_MAP.keys()
+    )
+)
 
-INVERSE_OPERATOR_MAP = dict(zip(OPERATOR_MAP.values(), OPERATOR_MAP.keys()))
+
+def create_array(iterable):
+    return '({})'.format(
+        ' '.join(
+            map(
+                unicode,
+                chain.from_iterable(iterable)
+            )
+        )
+    )
 
 
-def startswith_any(iterable, s):
-    return filter(lambda x: s.startswith(x + ' ') or s == x, iterable)
+def startswith_any(string, prefix_regexes):
+    return any(
+        map(
+            lambda prefix_regex: prefix_regex.match(string) is not None,
+            prefix_regexes
+        )
+    )
 
 
 def read_source_file(path):
@@ -46,30 +69,29 @@ def read_source_file(path):
 
 
 def quoted_string(argument):
-    argument = str(argument)
-    quoted = argument.startswith("'") and argument.endswith("'")
-    quoted = quoted or (argument.startswith('"') and argument.endswith('"'))
-    return quoted
+    return re.match(r'(\'.*\')|(".*")$', argument) is not None
 
 
-def quote(argument):    
-    if quoted_string(argument):
-        return argument
-    return '"%s"' % (
-        argument
-        .replace('\\', '\\\\')
-        .replace('"', '\\"')
-        .replace('$', '\\$')
-        .replace('`', '\\`')
-    )
+def wrap(string, wrap_string):
+    if not all([
+        string.startswith(wrap_string),
+        string.endswith(wrap_string)
+    ]):
+        return '{wrap_string}{string}{wrap_string}'.format(
+            string=string,
+            wrap_string=wrap_string
+        )
+    else:
+        return string
 
 
 def shell_quote(expression):
-    if isinstance(expression, dict):
-        if expression['type'] == TYPE_ARRAY:
-            return expression['value']
-    expression = str(expression)
-    return quote(expression) 
+    if not isinstance(expression, basestring):
+        return unicode(expression)
+    expression = unicode(expression).strip('\'"')
+    if not re.match(r'^\$[a-z_0-9]+$', expression, re.I) is None:
+        return wrap(expression, '"')
+    return wrap(quote(expression), "'")
 
 
 def import_module(module_name):
@@ -79,4 +101,3 @@ def import_module(module_name):
         return None
     else:
         return globals()[module_name]
-        
